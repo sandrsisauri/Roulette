@@ -13,7 +13,8 @@ namespace Roulette.Repository.LocalHelper
     {
         public async static Task<int> InsertTimedAsync<T>(this IDbConnection connection,
                                                      T model,
-                                                     CancellationToken cancellationToken = default) where T : BaseEntity<int>
+                                                     CancellationToken cancellationToken = default,
+                                                     IDbTransaction transaction = default) where T : BaseEntity<int>
         {
             model.ModifiedAt = DateTime.UtcNow;
 
@@ -21,7 +22,7 @@ namespace Roulette.Repository.LocalHelper
                 model.CreatedAt = DateTime.UtcNow;
 
             cancellationToken.ThrowIfCancellationRequested();
-            return await connection.InsertAsync(model);
+            return await connection.InsertAsync(model, transaction);
         }
     }
 }

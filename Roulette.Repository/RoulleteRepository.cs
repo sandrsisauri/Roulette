@@ -10,34 +10,49 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
-using Roulette.Helper;
 using System.Net;
 using ge.singular.roulette;
+using System.Data;
 
 namespace Roulette.Repository
 {
     public class RouletteRepository : IRouletteRepository
     {
         private readonly DataContext _dataContext;
+        private readonly IDbTransaction _transaction;
 
-        public RouletteRepository(DataContext dataContext)
+        public RouletteRepository(DataContext dataContext,
+                                  IDbTransaction transaction = default)
         {
             this._dataContext = dataContext;
+            this._transaction = transaction;
         }
 
-        public async Task<int> CreateBet(CreateBetRequestModel model, CancellationToken cancellationToken)
+        public async Task<int> CreateBet(CreateBetRequestModel model,
+                                         CancellationToken cancellationToken,
+                                         IDbTransaction transaction = default)
         {
-            return await _dataContext.Connection.InsertTimedAsync(Mapper.Map<Bet>(model), cancellationToken);
+            return await _dataContext.Connection.InsertTimedAsync(Mapper.Map<Bet>(model),
+                                                                  cancellationToken,
+                                                                  transaction);
         }
 
-        public async Task<int> CreateWinnings(CreateWinningsRequestModel model, CancellationToken cancellationToken)
+        public async Task<int> CreateWinnings(CreateWinningsRequestModel model,
+                                              CancellationToken cancellationToken,
+                                              IDbTransaction transaction = default)
         {
-            return await _dataContext.Connection.InsertTimedAsync(Mapper.Map<Winning>(model), cancellationToken);
+            return await _dataContext.Connection.InsertTimedAsync(Mapper.Map<Winning>(model),
+                                                                  cancellationToken,
+                                                                  transaction);
         }
 
-        public async Task<int> CreateJackPot(CreateJackpotRequestModel model, CancellationToken cancellationToken)
+        public async Task<int> CreateJackPot(CreateJackpotRequestModel model,
+                                             CancellationToken cancellationToken,
+                                             IDbTransaction transaction = default)
         {
-            return await _dataContext.Connection.InsertTimedAsync(Mapper.Map<Jackpot>(model), cancellationToken);
+            return await _dataContext.Connection.InsertTimedAsync(Mapper.Map<Jackpot>(model),
+                                                                  cancellationToken,
+                                                                  transaction);
         }
 
         public async Task<Response<IEnumerable<GameHistoryResponseModel>>> GetGameHistoryByUser(Guid userId, CancellationToken cancellationToken)
@@ -66,9 +81,13 @@ namespace Roulette.Repository
             return response;
         }
 
-        public async Task<Response<UserBalanceResponseModel>> GetUserBalance(Guid userId, CancellationToken cancellationToken)
+        public async Task<Response<UserBalanceResponseModel>> GetUserBalance(Guid userId,
+                                                                             CancellationToken cancellationToken,
+                                                                             IDbTransaction transaction = default)
         {
-            var userBalance = await _dataContext.Connection.QuerySingleAsync<UserBalanceResponseModel>(@$"select Id as UserId, UserName, Balance from RouletteUsers where Id = '{userId}'", cancellationToken);
+            var userBalance = await _dataContext.Connection.QuerySingleAsync<UserBalanceResponseModel>(@$"select Id as UserId, UserName, Balance from RouletteUsers where Id = '{userId}'",
+                                                                                                       cancellationToken,
+                                                                                                       transaction);
 
             return new Response<UserBalanceResponseModel>()
             {
@@ -76,14 +95,24 @@ namespace Roulette.Repository
             };
         }
 
-        private async Task AddWinToUserBalance(Guid userId, decimal amount, CancellationToken cancellationToken)
+        private async Task AddWinToUserBalance(Guid userId,
+                                               decimal amount,
+                                               CancellationToken cancellationToken,
+                                               IDbTransaction transaction = default)
         {
-            await _dataContext.Connection.ExecuteAsync(@$"update RouletteUsers set Balance = (select Balance + {amount} from RouletteUsers where  Id = '{userId}' ) where Id = '{userId}'", cancellationToken);
+            await _dataContext.Connection.ExecuteAsync(@$"update RouletteUsers set Balance = (select Balance + {amount} from RouletteUsers where  Id = '{userId}' ) where Id = '{userId}'",
+                                                       cancellationToken,
+                                                       transaction);
         }
 
-        private async Task SubstractBetFromUserBalance(Guid userId, decimal amount, CancellationToken cancellationToken)
+        private async Task SubstractBetFromUserBalance(Guid userId,
+                                                       decimal amount,
+                                                       CancellationToken cancellationToken,
+                                                       IDbTransaction transaction = default)
         {
-            await _dataContext.Connection.ExecuteAsync(@$"update RouletteUsers set Balance = (select Balance - {amount} from RouletteUsers where  Id = '{userId}' ) where Id = '{userId}'", cancellationToken);
+            await _dataContext.Connection.ExecuteAsync(@$"update RouletteUsers set Balance = (select Balance - {amount} from RouletteUsers where  Id = '{userId}' ) where Id = '{userId}'",
+                                                       cancellationToken,
+                                                       transaction);
         }
 
         #region BetIsValidOperations
@@ -101,7 +130,7 @@ namespace Roulette.Repository
             }
 
             var betAmount = BetValidResponse.getBetAmount();
-            var userBalance = await GetUserBalance(userId, cancellationToken);
+            var userBalance = await GetUserBalance(userId, cancellationToken, _transaction);
             if (betAmount > userBalance.Data.Balance)
             {
                 response.ChangeStatusCode(HttpStatusCode.BadRequest, nameof(BetRequestModel.Bet) + " amount can't be more than balance");
@@ -110,9 +139,9 @@ namespace Roulette.Repository
             var winNum = new Random().Next(0, 36);
             var estWin = CheckBets.EstimateWin(request.Bet, winNum);
             if (estWin > 0)
-                await AddWinToUserBalance(userId, estWin, cancellationToken);
+                await AddWinToUserBalance(userId, estWin, cancellationToken, _transaction);
 
-            await SubstractBetFromUserBalance(userId, betAmount, cancellationToken);
+            await SubstractBetFromUserBalance(userId, betAmount, cancellationToken, _transaction);
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -122,7 +151,8 @@ namespace Roulette.Repository
                             BetString = request.Bet,
                             BetAmount = betAmount,
                             UserId = userId
-                        }, cancellationToken);
+                        }, cancellationToken, 
+                        _transaction);
 
             _ = await CreateWinnings(
                         new CreateWinningsRequestModel()
@@ -131,14 +161,16 @@ namespace Roulette.Repository
                             WonAmount = estWin,
                             UserId = userId,
                             BetId = betId
-                        }, cancellationToken);
+                        }, cancellationToken,
+                        _transaction);
 
             _ = await CreateJackPot(
                        new CreateJackpotRequestModel()
                        {
                            Amount = (decimal)(betAmount * 0.01),
                            BetId = betId
-                       }, cancellationToken);
+                       }, cancellationToken,
+                       _transaction);
 
             return new Response<BetResponseModel>()
             {

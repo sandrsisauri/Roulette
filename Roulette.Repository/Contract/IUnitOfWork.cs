@@ -8,6 +8,7 @@ namespace Roulette.Repository.Contract
     public interface IUnitOfWork
     {
         IUserRepository UserRepository { get; }
+        IRouletteRepository RouletteRepository { get; }
 
         Task Commit();
     }

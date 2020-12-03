@@ -16,6 +16,7 @@ namespace Roulette.Repository
         private readonly RoleManager<Role> _roleManager;
         private DataContext _context;
         private IUserRepository _userRepository;
+        private IRouletteRepository _rouletteRepository;
         private readonly IDbTransaction _transaction;
 
         public UnitOfWork(UserManager<User> userManager,
@@ -61,6 +62,12 @@ namespace Roulette.Repository
         {
             get { return _userRepository = new UserRepository(_userManager, _signInManager, _configuration, _roleManager, _context, _transaction); }
         }
+
+        public IRouletteRepository RouletteRepository
+        {
+            get { return _rouletteRepository = new RouletteRepository(_context, _transaction); }
+        }
+
         private void ResetRepositories()
         {
             _userRepository = null;
