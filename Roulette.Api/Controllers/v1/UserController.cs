@@ -55,21 +55,32 @@ namespace Roulette.Api.Controllers.v1
             cancellationToken.ThrowIfCancellationRequested();
 
             var result = await _userManager.CreateAsync(user);
-            await _userManager.AddToRoleAsync(user, Const.User);
+
+            _ = await _userManager.AddToRoleAsync(user, Const.User);
 
             if (result.Succeeded)
                 return Created("api/v1/user/" + nameof(Register),
-                    new
+                    new Response<CreateUserResponseModel>
                     {
-                        userId = user.Id,
-                        token = new JwtSecurityTokenHandler().WriteToken(await _userRepository.GenerateToken(user))
+                        Data = new CreateUserResponseModel()
+                        {
+                            UserId = Guid.Parse(user.Id),
+                            Token = new JwtSecurityTokenHandler().WriteToken(await _userRepository.GenerateToken(user))
+                        }
                     });
 
-            return BadRequest(result);
+            return BadRequest(new Response<CreateUserResponseModel>()
+            {
+                Data = new CreateUserResponseModel()
+                {
+                    IdentityResult = result
+                },
+                Message = "Oops, something went wrong..."
+            });
         }
 
         [AllowAnonymous]
-        [HttpPost("RequestToken")]
+        [HttpPost(nameof(RequestToken))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -77,40 +88,48 @@ namespace Roulette.Api.Controllers.v1
         {
             var user = await _userManager.FindByNameAsync(input.UserName);
             if (user == null)
-                return BadRequest(nameof(user));
+                return NotFound(nameof(user));
 
             if (Crypto.VerifyHashedPassword(user.PasswordHash, input.Password))
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 JwtSecurityToken token = await _userRepository.GenerateToken(user);
 
-                return Ok(new
+                return Ok(new TokenResponseModel()
                 {
-                    token = new JwtSecurityTokenHandler().WriteToken(token)
+                    Token = new JwtSecurityTokenHandler().WriteToken(token)
                 });
             }
+
             return BadRequest();
         }
 
         [HttpGet()]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetUser(string userName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             var user = await _userManager.FindByNameAsync(userName);
             if (user == null)
-                return BadRequest(nameof(user));
+                return NotFound(new Response<UserResponseModel>()
+                {
+                    Message = nameof(user)
+                });
 
-            return Ok(Mapper.Map<UserResponseModel>(user));
+            return Ok(new Response<UserResponseModel>()
+            {
+                Data = Mapper.Map<UserResponseModel>(user)
+            });
         }
 
         [HttpDelete()]
         [Authorize(Roles = Const.Admin)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Delete(Guid userId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();

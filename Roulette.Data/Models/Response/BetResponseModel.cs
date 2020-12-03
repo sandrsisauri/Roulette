@@ -6,7 +6,7 @@ namespace Roulette.Data.Models.Response
 {
     public class BetResponseModel
     {
-        public long BetAmount { get; set; }
-        public int WinningAmount { get; set; }
+        public long BetAmount { get; init; }
+        public int WinningAmount { get; init; }
     }
 }

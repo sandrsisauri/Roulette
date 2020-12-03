@@ -14,6 +14,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Roulette.Helper;
 
 namespace Roulette.Repository
 {
@@ -71,7 +72,7 @@ namespace Roulette.Repository
             new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
             new Claim(_options.ClaimsIdentity.UserIdClaimType, user.Id.ToString()),
             new Claim(_options.ClaimsIdentity.UserNameClaimType, user.UserName),
-            new Claim("UserId", user.Id.ToString())
+            new Claim(Const.UserIdClaim, user.Id.ToString())
         };
             var userClaims = await _userManager.GetClaimsAsync(user);
             var userRoles = await _userManager.GetRolesAsync(user);

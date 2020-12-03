@@ -6,7 +6,7 @@ namespace Roulette.Data.Models.Response
 {
     public class UserResponseModel
     {
-        public Guid? ID { get; set; }
-        public string UserName { get; set; }
+        public Guid? ID { get; init; }
+        public string UserName { get; init; }
     }
 }

@@ -6,7 +6,7 @@ namespace Roulette.Data.Models.Request
 {
     public class CreateJackpotRequestModel
     {
-        public decimal Amount { get; set; }
-        public int BetId { get; set; }
+        public decimal Amount { get; init; }
+        public int BetId { get; init; }
     }
 }

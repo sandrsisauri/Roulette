@@ -30,12 +30,10 @@ namespace Roulette.Api.Exstensions
             var isAuthenticated = !string.IsNullOrEmpty(token);
 
             if (!isAuthenticated)
-            {
                 await _next(context);
-            }
             else
             {
-                var userid = ControllerBaseEx.GetUserIdFromToken(token);
+                var userid = ControllerBaseEx.GetUserIdFromTokenAsync(token);
                 var user = await userManager.FindByIdAsync(userid.ToString());
                 var newtoken = await userRepository.GenerateToken(user);
 

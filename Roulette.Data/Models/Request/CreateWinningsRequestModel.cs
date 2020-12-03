@@ -7,9 +7,9 @@ namespace Roulette.Data.Models.Request
 {
     public class CreateWinningsRequestModel
     {
-        public int WinningNumber { get; set; }
-        public int WonAmount { get; set; }
-        public int BetId { get; set; }
-        public Guid UserId { get; set; }
+        public int WinningNumber { get; init; }
+        public int WonAmount { get; init; }
+        public int BetId { get; init; }
+        public Guid UserId { get; init; }
     }
 }

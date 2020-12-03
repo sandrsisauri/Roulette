@@ -279,7 +279,7 @@ ALTER TABLE [dbo].[RouletteUserClaims] CHECK CONSTRAINT [FK_RouletteUserClaims_R
     }
     public class DatabaseHelper
     {
-        public string ConnectionString { get; protected set; }
+        public string ConnectionString { get; protected init; }
 
         public DatabaseHelper(string connectionString)
         {

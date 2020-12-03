@@ -6,7 +6,7 @@ namespace Roulette.Data.Models.Response
 {
     public class JackpotSumResponseModel
     {
-        public decimal JackpotAmount { get; set; }
-        public DateTime LastModifietAt { get; set; }
+        public decimal JackpotAmount { get; init; }
+        public DateTime LastModifietAt { get; init; }
     }
 }

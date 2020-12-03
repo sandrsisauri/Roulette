@@ -6,6 +6,6 @@ namespace Roulette.Data.Models
 {
     public class SeedRoleModel
     {
-        public string Name { get; set; }
+        public string Name { get; init; }
     }
 }

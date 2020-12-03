@@ -6,8 +6,8 @@ namespace Roulette.Data.Models.Response
 {
     public class UserBalanceResponseModel
     {
-        public Guid UserId { get; set; }
-        public string UserName { get; set; }
-        public decimal Balance { get; set; }
+        public Guid UserId { get; init; }
+        public string UserName { get; init; }
+        public decimal Balance { get; init; }
     }
 }

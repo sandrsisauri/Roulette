@@ -6,9 +6,9 @@ namespace Roulette.Data.Models.Response
 {
     public class GameHistoryResponseModel
     {
-        public int Id { get; set; }
-        public int BetAmount { get; set; }
-        public int WonAmount { get; set; }
-        public DateTime SpinDate { get; set; }
+        public int Id { get; init; }
+        public int BetAmount { get; init; }
+        public int WonAmount { get; init; }
+        public DateTime SpinDate { get; init; }
     }
 }
