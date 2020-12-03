@@ -76,18 +76,20 @@ namespace Roulette.Repository
             };
         }
 
-        public async Task AddWinToUserBalance(Guid userId, decimal amount, CancellationToken cancellationToken)
+        private async Task AddWinToUserBalance(Guid userId, decimal amount, CancellationToken cancellationToken)
         {
             await _dataContext.Connection.ExecuteAsync(@$"update RouletteUsers set Balance = (select Balance + {amount} from RouletteUsers where  Id = '{userId}' ) where Id = '{userId}'", cancellationToken);
         }
 
-        public async Task SubstractBetFromBalance(Guid userId, decimal amount, CancellationToken cancellationToken)
+        private async Task SubstractBetFromUserBalance(Guid userId, decimal amount, CancellationToken cancellationToken)
         {
             await _dataContext.Connection.ExecuteAsync(@$"update RouletteUsers set Balance = (select Balance - {amount} from RouletteUsers where  Id = '{userId}' ) where Id = '{userId}'", cancellationToken);
         }
 
         #region BetIsValidOperations
-        public async Task<Response<BetResponseModel>> BetIsValidHandlerAsync(BetRequestModel request, Guid userId, CancellationToken cancellationToken)
+        public async Task<Response<BetResponseModel>> BetIsValidHandlerAsync(BetRequestModel request,
+                                                                             Guid userId,
+                                                                             CancellationToken cancellationToken)
         {
             var BetValidResponse = CheckBets.IsValid(request.Bet);
 
@@ -110,7 +112,7 @@ namespace Roulette.Repository
             if (estWin > 0)
                 await AddWinToUserBalance(userId, estWin, cancellationToken);
 
-            await SubstractBetFromBalance(userId, betAmount, cancellationToken);
+            await SubstractBetFromUserBalance(userId, betAmount, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 

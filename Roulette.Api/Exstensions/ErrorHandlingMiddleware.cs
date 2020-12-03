@@ -49,6 +49,7 @@ namespace Roulette.Api.Exstensions
                 using (SentrySdk.Init(configuration["Sentry:Dsn"]))
                     SentrySdk.CaptureException(ex);
             }
+
             return httpContext.Response.WriteAsync(result);
         }
     }

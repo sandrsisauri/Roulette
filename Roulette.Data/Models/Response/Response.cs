@@ -18,13 +18,14 @@ namespace Roulette.Data.Models.Response
             StatusCode = (int)HttpStatusCode.OK;
         }
 
-        public T Data { get; init; }
-        public string Message { get; init; }
+        public T Data { get; set; }
+        public string Message { get; private set; }
         public int StatusCode { get; private set; }
 
         public void ChangeStatusCode(HttpStatusCode statusCode, string message = null)
         {
             StatusCode = (int)statusCode;
+            Message = message;
         }
         public HttpStatusCode GetNormalizedStatusCode()
         {

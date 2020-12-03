@@ -11,6 +11,5 @@ namespace Roulette.Data.Models.Response
     {
         public Guid UserId { get; init; }
         public string Token { get; init; }
-        public IdentityResult IdentityResult { get; init; }
     }
 }

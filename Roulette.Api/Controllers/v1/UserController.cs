@@ -1,16 +1,11 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Roulette.Data.Models.Request;
-using Roulette.Data.Models.Response;
 using Roulette.Repository.Contract;
 using Roulette.Entity;
-using Roulette.Helper.Statics;
-using System;
-using System.IdentityModel.Tokens.Jwt;
 using System.Threading;
 using System.Threading.Tasks;
 using Roulette.Helper;
@@ -48,35 +43,9 @@ namespace Roulette.Api.Controllers.v1
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Register([FromBody] CreateUserRequestModel input, CancellationToken cancellationToken)
         {
-            var hashedPassword = Crypto.HashPassword(input.Password);
+           var response = await _userRepository.CreateUser(input, cancellationToken);
 
-            var user = new User() { UserName = input.UserName, PasswordHash = hashedPassword };
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var result = await _userManager.CreateAsync(user);
-
-            _ = await _userManager.AddToRoleAsync(user, Const.User);
-
-            if (result.Succeeded)
-                return Created("api/v1/user/" + nameof(Register),
-                    new Response<CreateUserResponseModel>
-                    {
-                        Data = new CreateUserResponseModel()
-                        {
-                            UserId = Guid.Parse(user.Id),
-                            Token = new JwtSecurityTokenHandler().WriteToken(await _userRepository.GenerateToken(user))
-                        }
-                    });
-
-            return BadRequest(new Response<CreateUserResponseModel>()
-            {
-                Data = new CreateUserResponseModel()
-                {
-                    IdentityResult = result
-                },
-                Message = "Oops, something went wrong..."
-            });
+            return StatusCode(response.StatusCode, response);
         }
 
         [AllowAnonymous]
@@ -86,22 +55,8 @@ namespace Roulette.Api.Controllers.v1
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> RequestToken([FromBody] LoginUserRequestModel input, CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByNameAsync(input.UserName);
-            if (user == null)
-                return NotFound(nameof(user));
-
-            if (Crypto.VerifyHashedPassword(user.PasswordHash, input.Password))
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                JwtSecurityToken token = await _userRepository.GenerateToken(user);
-
-                return Ok(new TokenResponseModel()
-                {
-                    Token = new JwtSecurityTokenHandler().WriteToken(token)
-                });
-            }
-
-            return BadRequest();
+            var response = await _userRepository.GetToken(input, cancellationToken);
+            return StatusCode(response.StatusCode, response);
         }
 
         [HttpGet()]
@@ -110,36 +65,8 @@ namespace Roulette.Api.Controllers.v1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetUser(string userName, CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var user = await _userManager.FindByNameAsync(userName);
-            if (user == null)
-                return NotFound(new Response<UserResponseModel>()
-                {
-                    Message = nameof(user)
-                });
-
-            return Ok(new Response<UserResponseModel>()
-            {
-                Data = Mapper.Map<UserResponseModel>(user)
-            });
-        }
-
-        [HttpDelete()]
-        [Authorize(Roles = Const.Admin)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> Delete(Guid userId, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            if (userId == Guid.Empty)
-                return BadRequest();
-
-            await _unitOfWork.UserRepository.Delete(userId);
-            await _unitOfWork.Commit();
-
-            return NoContent();
+            var response = await _userRepository.GetUserByName(userName, cancellationToken);
+            return StatusCode(response.StatusCode, response);
         }
     }
 }

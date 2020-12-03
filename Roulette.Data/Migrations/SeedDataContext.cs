@@ -3,9 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Roulette.Data.Models;
 using Roulette.Entity;
 using Roulette.Helper.Statics;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Roulette.Data.Migrations

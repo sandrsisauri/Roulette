@@ -6,9 +6,6 @@ using Roulette.Api.Controllers.v1;
 using Roulette.Repository.Contract;
 using Roulette.Entity;
 using Roulette.Helper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel;
 

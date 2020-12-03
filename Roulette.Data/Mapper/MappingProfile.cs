@@ -2,9 +2,7 @@
 using Roulette.Data.Models.Request;
 using Roulette.Data.Models.Response;
 using Roulette.Entity;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Roulette.Data.Mapper
 {
