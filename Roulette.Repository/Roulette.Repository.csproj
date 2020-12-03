@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AspNetCore.Identity.Dapper" Version="1.0.1" />
+    <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Roulette.Data\Roulette.Data.csproj" />   
+    <ProjectReference Include="..\Roulette.Helper\Roulette.Helper.csproj" />
+    <ProjectReference Include="..\Roulette.Entity\Roulette.Entity.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="ge.singular.roulette">
+      <HintPath>ge.singular.roulette.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
