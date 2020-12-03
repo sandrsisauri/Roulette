@@ -8,5 +8,7 @@ namespace Roulette.Helper
     {
         public const string RouletteConnectionString = "RouletteConnectionString";
         public const string access_token = "access_token";
+        public const string Admin = "Admin";
+        public const string User = "User";
     }
 }

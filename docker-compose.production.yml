@@ -25,7 +25,7 @@ services:
       context: .
       dockerfile: Roulette.Api/Dockerfile
 
-    image: ${DOCKER_REGISTRY-}Rouletteapi
+    image: ${DOCKER_REGISTRY-}roulette
 
     restart: on-failure
 

@@ -10,7 +10,6 @@ using Roulette.Data.Models.Response;
 using Roulette.Repository.Contract;
 using Roulette.Entity;
 using Roulette.Helper;
-using Roulette.Helper.Statics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +20,6 @@ namespace Roulette.Api.Controllers.v1
 {
     public class RouletteController : ControllerBaseEx
     {
-
         private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRouletteRepository _RouletteRepository;
@@ -42,7 +40,7 @@ namespace Roulette.Api.Controllers.v1
             _signInManager = signInManager;
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
-            this._RouletteRepository = RouletteRepository;
+            _RouletteRepository = RouletteRepository;
             _configuration = configuration;
             _roleManager = roleManager;
         }

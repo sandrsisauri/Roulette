@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Roulette.Entity;
 using Sentry;
 using System;
 using System.ComponentModel;
@@ -22,26 +23,21 @@ namespace Roulette.Api.Exstensions
         {
             if (httpContext == null) throw new ArgumentNullException(nameof(httpContext));
 
-            string userName = !string.IsNullOrEmpty(httpContext.Request.Query[nameof(Roulette.Entity.User.UserName)].ToString())
-                ? httpContext.Request.Query[nameof(Roulette.Entity.User.UserName)].ToString()
+            string userName = !string.IsNullOrEmpty(httpContext.Request.Query[nameof(User.UserName)].ToString())
+                ? httpContext.Request.Query[nameof(User.UserName)].ToString()
                 : "Unknown";
 
-            var ip  = httpContext.Request.HttpContext.Connection.RemoteIpAddress?.ToString();
+            var ip = httpContext.Request.HttpContext.Connection.RemoteIpAddress?.ToString();
 
             var sw = Stopwatch.StartNew();
-            try
-            {
-                await _next(httpContext);
-                sw.Stop();
-                var MessageTemplate = $"HTTP {httpContext.Request.Method} {httpContext.Request.Path} responded {httpContext.Response.StatusCode} in {sw.Elapsed.TotalMilliseconds:0.0000} ms [User:{userName}], with ip {ip}";
 
-                using (SentrySdk.Init(configuration["Sentry:Dsn"]))
-                    SentrySdk.CaptureMessage(MessageTemplate, Sentry.Protocol.SentryLevel.Info);
-            }
-            catch 
-            {
-                throw;
-            }
+            sw.Stop();
+            var MessageTemplate = $"HTTP {httpContext.Request.Method} {httpContext.Request.Path} responded {httpContext.Response.StatusCode} in {sw.Elapsed.TotalMilliseconds:0.0000} ms [User:{userName}], with ip {ip}";
+
+            using (SentrySdk.Init(configuration["Sentry:Dsn"]))
+                SentrySdk.CaptureMessage(MessageTemplate, Sentry.Protocol.SentryLevel.Info);
+
+            await _next(httpContext);
         }
     }
 }

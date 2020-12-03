@@ -10,9 +10,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace Roulette.Api.Exstensions
 {
+    [Description("Adds new token for each request")]
     public class AccessTokenMiddleware
     {
         private readonly RequestDelegate _next;

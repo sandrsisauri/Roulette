@@ -29,16 +29,13 @@ namespace Roulette.Api
 {
     public class Startup
     {
-        private readonly IWebHostEnvironment _appEnv;
         public IConfiguration Configuration { get; }
 
 
-        public Startup(IConfiguration configuration, IWebHostEnvironment appEnv)
+        public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            this._appEnv = appEnv;
         }
-
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -55,8 +52,7 @@ namespace Roulette.Api
                 settings.Password.RequireLowercase = false;
                 settings.User.RequireUniqueEmail = false;
             })
-    .AddDapperStores(new SqlServerProvider(Configuration.GetConnectionString(Const.RouletteConnectionString),
-    new SqlConfiguration(new System.Data.SqlClient.SqlConnectionStringBuilder(Configuration.GetConnectionString(Const.RouletteConnectionString)).InitialCatalog, "RouletteUsers", "RouletteRoles", "RouletteUserClaims", "RouletteUserRoles", "RouletteUserLogins", "RouletteRoleClaims", "RouletteUserTokens")))
+    .AddDapperStores(new SqlServerProvider(Configuration.GetConnectionString(Const.RouletteConnectionString), new SqlConfiguration(new System.Data.SqlClient.SqlConnectionStringBuilder(Configuration.GetConnectionString(Const.RouletteConnectionString)).InitialCatalog, "RouletteUsers", "RouletteRoles", "RouletteUserClaims", "RouletteUserRoles", "RouletteUserLogins", "RouletteRoleClaims", "RouletteUserTokens")))
     .AddDefaultTokenProviders();
 
             services.AddSwaggerDocument(config =>
@@ -128,13 +124,13 @@ namespace Roulette.Api
                 config.AddProfile<MappingProfile>();
             });
 
-            _ = services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
 
-            _ = services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            _ = services.AddTransient<IRouletteRepository, RouletteRepository>();
+            services.AddTransient<IRouletteRepository, RouletteRepository>();
 
-            _ = services.AddTransient<SeedDataContext>();
+            services.AddTransient<SeedDataContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

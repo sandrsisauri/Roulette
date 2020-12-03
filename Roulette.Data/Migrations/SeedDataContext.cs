@@ -24,8 +24,8 @@ namespace Roulette.Data.Migrations
             _userManager = signInManager;
             _roleManager = roleManager;
             Configuration = configuration;
-            seedUserModel = this.Configuration.GetSection("UserSeed").Get<IEnumerable<SeedUserModel>>();
-            seedRoleModel = this.Configuration.GetSection("RoleSeed").Get<IEnumerable<SeedRoleModel>>();
+            seedUserModel = Configuration.GetSection("UserSeed").Get<IEnumerable<SeedUserModel>>();
+            seedRoleModel = Configuration.GetSection("RoleSeed").Get<IEnumerable<SeedRoleModel>>();
         }
 
         public IConfiguration Configuration { get; }

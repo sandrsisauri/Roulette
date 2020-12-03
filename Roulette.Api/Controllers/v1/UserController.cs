@@ -10,11 +10,10 @@ using Roulette.Repository.Contract;
 using Roulette.Entity;
 using Roulette.Helper.Statics;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Roulette.Helper;
 
 namespace Roulette.Api.Controllers.v1
 {
@@ -43,7 +42,7 @@ namespace Roulette.Api.Controllers.v1
         }
 
         [HttpPost()]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = Const.Admin)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -56,10 +55,10 @@ namespace Roulette.Api.Controllers.v1
             cancellationToken.ThrowIfCancellationRequested();
 
             var result = await _userManager.CreateAsync(user);
-            await _userManager.AddToRoleAsync(user, "User");
+            await _userManager.AddToRoleAsync(user, Const.User);
 
             if (result.Succeeded)
-                return Created("api/user/" + nameof(Register),
+                return Created("api/v1/user/" + nameof(Register),
                     new
                     {
                         userId = user.Id,
@@ -109,7 +108,7 @@ namespace Roulette.Api.Controllers.v1
         }
 
         [HttpDelete()]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = Const.Admin)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> Delete(Guid userId, CancellationToken cancellationToken)

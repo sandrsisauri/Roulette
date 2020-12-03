@@ -62,7 +62,7 @@ namespace Roulette.Integration.Test
         }
 
         [Fact]
-        public async Task Register_WithoutInput_Should_Return201()
+        public async Task Register_WithoutInput_Should_Return400()
         {
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", (await GetToken()).Token);
 
