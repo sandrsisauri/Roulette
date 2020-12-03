@@ -40,99 +40,16 @@ namespace Roulette.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient(implementationFactory: sp => new DataContext(Configuration.GetConnectionString(Const.RouletteConnectionString)));
-
-            services.AddIdentity<User, Role>(settings =>
-            {
-                settings.Lockout.MaxFailedAccessAttempts = 3;
-                settings.Password.RequiredLength = 3;
-                settings.Password.RequireNonAlphanumeric = false;
-                settings.Password.RequireUppercase = false;
-                settings.Password.RequireDigit = false;
-                settings.Password.RequireLowercase = false;
-                settings.User.RequireUniqueEmail = false;
-            })
-    .AddDapperStores(new SqlServerProvider(Configuration.GetConnectionString(Const.RouletteConnectionString), new SqlConfiguration(new System.Data.SqlClient.SqlConnectionStringBuilder(Configuration.GetConnectionString(Const.RouletteConnectionString)).InitialCatalog, "RouletteUsers", "RouletteRoles", "RouletteUserClaims", "RouletteUserRoles", "RouletteUserLogins", "RouletteRoleClaims", "RouletteUserTokens")))
-    .AddDefaultTokenProviders();
-
-            services.AddSwaggerDocument(config =>
-            {
-                config.SerializerSettings = new Newtonsoft.Json.JsonSerializerSettings()
-                {
-                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                    Converters = { new StringEnumConverter() },
-                };
-                config.OperationProcessors.Add(new OperationSecurityScopeProcessor("JWT Token"));
-                config.DocumentProcessors.Add(new SecurityDefinitionAppender("JWT Token", new OpenApiSecurityScheme
-                {
-                    Type = OpenApiSecuritySchemeType.ApiKey,
-                    Name = "Authorization",
-                    Description = "Type 'Bearer ' + valid JWT token into field",
-                    In = OpenApiSecurityApiKeyLocation.Header
-                }));
-
-                config.PostProcess = swagger =>
-                {
-                    swagger.Info.Title = "Roulette API";
-                    swagger.Info.Contact = new OpenApiContact
-                    {
-                        Name = "Aleksandre Sisauri",
-                        Email = "Sisauri.Aleksandre@gmail.com",
-                    };
-                };
-            });
-
+            AddIdentity(services);
+            AddSwagger(services);
             services.AddControllers();
-
-            //fluent migration services
-            services.AddFluentMigratorCore().
-                     ConfigureRunner(rb => rb
-                    .WithGlobalConnectionString(Configuration.GetConnectionString(Const.RouletteConnectionString))
-                    .AddSqlServer()
-                    .WithMigrationsIn(new System.Reflection.Assembly[] { typeof(Migration_Initial).Assembly
-
-    })
-                    // Define the assembly containing the migrations
-                    .ScanIn(typeof(Migration_Initial).Assembly).For.Migrations())
-                // Build the service provider
-                .BuildServiceProvider(false);
-
-            services.AddAuthentication(option =>
-            {
-                option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                option.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
-            {
-                options.SaveToken = true;
-                options.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidAudience = Configuration["Jwt:Issuer"],
-                    ValidIssuer = Configuration["Jwt:Issuer"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:SigningKey"]))
-                };
-            });
-
+            AddFluentMigration(services);
+            AddAuthentication(services);
             services.AddRouting(options => options.LowercaseUrls = true);
-
             services.AddHealthChecks();
-
-            Mapper.Initialize((config) =>
-            {
-                config.AddProfile<MappingProfile>();
-            });
-
-            services.AddTransient<IUserRepository, UserRepository>();
-
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-            services.AddTransient<IRouletteRepository, RouletteRepository>();
-
-            services.AddTransient<SeedDataContext>();
+            AddMapper();
+            AddDependencies(services);
         }
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, SeedDataContext seeder)
         {
@@ -184,6 +101,111 @@ namespace Roulette.Api
             {
                 endpoints.MapControllers();
             });
+        }
+        private void AddDependencies(IServiceCollection services)
+        {
+            services.AddTransient(implementationFactory: sp => new DataContext(Configuration.GetConnectionString(Const.RouletteConnectionString)));
+
+            services.AddTransient<IUserRepository, UserRepository>();
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services.AddTransient<IRouletteRepository, RouletteRepository>();
+
+            services.AddTransient<SeedDataContext>();
+        }
+
+        private static void AddMapper()
+        {
+            Mapper.Initialize((config) =>
+            {
+                config.AddProfile<MappingProfile>();
+            });
+        }
+
+        private void AddAuthentication(IServiceCollection services)
+        {
+            services.AddAuthentication(option =>
+            {
+                option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                option.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidAudience = Configuration["Jwt:Issuer"],
+                    ValidIssuer = Configuration["Jwt:Issuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:SigningKey"]))
+                };
+            });
+        }
+
+        private void AddFluentMigration(IServiceCollection services)
+        {
+            //fluent migration services
+            services.AddFluentMigratorCore().
+                     ConfigureRunner(rb => rb
+                    .WithGlobalConnectionString(Configuration.GetConnectionString(Const.RouletteConnectionString))
+                    .AddSqlServer()
+                    .WithMigrationsIn(new System.Reflection.Assembly[] { typeof(Migration_Initial).Assembly
+
+    })
+                    // Define the assembly containing the migrations
+                    .ScanIn(typeof(Migration_Initial).Assembly).For.Migrations())
+                // Build the service provider
+                .BuildServiceProvider(false);
+        }
+
+        private static void AddSwagger(IServiceCollection services)
+        {
+            services.AddSwaggerDocument(config =>
+            {
+                config.SerializerSettings = new Newtonsoft.Json.JsonSerializerSettings()
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                    Converters = { new StringEnumConverter() },
+                };
+                config.OperationProcessors.Add(new OperationSecurityScopeProcessor("JWT Token"));
+                config.DocumentProcessors.Add(new SecurityDefinitionAppender("JWT Token", new OpenApiSecurityScheme
+                {
+                    Type = OpenApiSecuritySchemeType.ApiKey,
+                    Name = "Authorization",
+                    Description = "Type 'Bearer ' + valid JWT token into field",
+                    In = OpenApiSecurityApiKeyLocation.Header
+                }));
+
+                config.PostProcess = swagger =>
+                {
+                    swagger.Info.Title = "Roulette API";
+                    swagger.Info.Contact = new OpenApiContact
+                    {
+                        Name = "Aleksandre Sisauri",
+                        Email = "Sisauri.Aleksandre@gmail.com",
+                    };
+                };
+            });
+        }
+
+        private void AddIdentity(IServiceCollection services)
+        {
+            services.AddIdentity<User, Role>(settings =>
+            {
+                settings.Lockout.MaxFailedAccessAttempts = 3;
+                settings.Password.RequiredLength = 3;
+                settings.Password.RequireNonAlphanumeric = false;
+                settings.Password.RequireUppercase = false;
+                settings.Password.RequireDigit = false;
+                settings.Password.RequireLowercase = false;
+                settings.User.RequireUniqueEmail = false;
+            })
+                .AddDapperStores(new SqlServerProvider(
+                    Configuration.GetConnectionString(Const.RouletteConnectionString),
+                    new SqlConfiguration(new System.Data.SqlClient.SqlConnectionStringBuilder(Configuration.GetConnectionString(Const.RouletteConnectionString)).InitialCatalog, "RouletteUsers", "RouletteRoles", "RouletteUserClaims", "RouletteUserRoles", "RouletteUserLogins", "RouletteRoleClaims", "RouletteUserTokens")))
+                .AddDefaultTokenProviders();
         }
     }
 }

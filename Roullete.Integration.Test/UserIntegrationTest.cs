@@ -34,7 +34,7 @@ namespace Roulette.Integration.Test
         [Fact]
         public async Task Get_DefaultUser_ByName_Should_Return200()
         {
-            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", (await GetToken()).Token);
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", (await GetToken()).Data.Token);
 
             var user = await Client.GetAsync($"api/v1/user?username=Admin");
 
@@ -44,7 +44,7 @@ namespace Roulette.Integration.Test
         [Fact]
         public async Task Get_User_ByName_WithoutName_Should_Return201()
         {
-            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", (await GetToken()).Token);
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", (await GetToken()).Data.Token);
 
             var user = await Client.GetAsync($"api/v1/user");
 
@@ -54,7 +54,7 @@ namespace Roulette.Integration.Test
         [Fact]
         public async Task Get_UserByName_With_InvalidName_Should_Return404()
         {
-            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", (await GetToken()).Token);
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", (await GetToken()).Data.Token);
 
             var user = await Client.GetAsync($"api/v1/user/findbyname?username={Guid.NewGuid()}");
 
@@ -64,7 +64,7 @@ namespace Roulette.Integration.Test
         [Fact]
         public async Task Register_WithoutInput_Should_Return400()
         {
-            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", (await GetToken()).Token);
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", (await GetToken()).Data.Token);
 
             var response = await Client.PostAsJsonAsync("api/v1/user", JsonConvert.SerializeObject(default));
 

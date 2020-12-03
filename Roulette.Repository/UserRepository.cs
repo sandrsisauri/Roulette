@@ -69,6 +69,7 @@ namespace Roulette.Repository
                 {
                     Token = new JwtSecurityTokenHandler().WriteToken(token)
                 };
+                return response;
             }
 
             response.ChangeStatusCode(HttpStatusCode.BadRequest);

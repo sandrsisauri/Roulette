@@ -23,7 +23,6 @@ namespace Roulette.Integration.Test.LocalHelper
         {
             var response = await Client.PostAsJsonAsync("api/v1/user/requesttoken", new { userName, password });
 
-
             if (!response.IsSuccessStatusCode) return null;
 
             var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -34,7 +33,7 @@ namespace Roulette.Integration.Test.LocalHelper
 
             return obj;
         }
-
-        protected class Response { public string Token { get; set; } public HttpStatusCode Status { get; set; } }
+        public class Data { public string Token { get; init; }}
+        public class Response { public Data Data { get; init; } public HttpStatusCode Status { get; set; } }
     }
 }
