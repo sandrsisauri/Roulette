@@ -12,9 +12,9 @@ namespace Roulette.Repository.Contract
 {
     public interface IUserRepository
     {
-        Task<Response<CreateUserResponseModel>> CreateUser(CreateUserRequestModel input, CancellationToken cancellationToken);
+        Task<Response<CreateUserResponseModel>> CreateUserAsync(CreateUserRequestModel input, CancellationToken cancellationToken);
         Task<JwtSecurityToken> GenerateToken(User user);
-        Task<Response<TokenResponseModel>> GetToken(LoginUserRequestModel input, CancellationToken cancellationToken);
-        Task<Response<UserResponseModel>> GetUserByName(string userName, CancellationToken cancellationToken);
+        Task<Response<TokenResponseModel>> GetTokenAsync(LoginUserRequestModel input, CancellationToken cancellationToken);
+        Task<Response<UserResponseModel>> GetUserByNameAsync(string userName, CancellationToken cancellationToken);
     }
 }

@@ -17,14 +17,6 @@ namespace Roulette.Integration.Test
         { }
 
         [Fact]
-        public async Task Get_User_Unauthorized_Should_Return401()
-        {
-            var response = await Client.GetAsync($"api/v1/user/{Const.DefaultUser}");
-
-            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
-        }
-
-        [Fact]
         public async Task Get_DefaultUser_Token_ThenOK_Test()
         {
             var response = await GetToken();
@@ -37,9 +29,9 @@ namespace Roulette.Integration.Test
         {
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", (await GetToken()).Data.Token);
 
-            var user = await Client.GetAsync($"api/v1/user/{Const.DefaultUser}");
+            var response = await Client.GetAsync($"api/v1/user/{Const.DefaultUser}");
 
-            Assert.Equal(HttpStatusCode.OK, user.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
 
         [Fact]
@@ -47,9 +39,9 @@ namespace Roulette.Integration.Test
         {
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", (await GetToken()).Data.Token);
 
-            var user = await Client.GetAsync($"api/v1/user/findbyname?username={Guid.NewGuid()}");
+            var response = await Client.GetAsync($"api/v1/user/findbyname?username={Guid.NewGuid()}");
 
-            Assert.Equal(HttpStatusCode.NotFound, user.StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         [Fact]

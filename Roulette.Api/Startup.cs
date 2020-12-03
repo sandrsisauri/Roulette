@@ -119,6 +119,9 @@ namespace Roulette.Api
 
         private static void AddMapper()
         {
+#if DEBUG
+            Mapper.Reset();
+#endif
             Mapper.Initialize((config) =>
             {
                 config.AddProfile<MappingProfile>();

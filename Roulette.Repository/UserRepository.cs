@@ -50,7 +50,7 @@ namespace Roulette.Repository
             _context = contex;
         }
 
-        public async Task<Response<TokenResponseModel>> GetToken(LoginUserRequestModel input, CancellationToken cancellationToken)
+        public async Task<Response<TokenResponseModel>> GetTokenAsync(LoginUserRequestModel input, CancellationToken cancellationToken)
         {
             var response = new Response<TokenResponseModel>();
             var user = await _userManager.FindByNameAsync(input.UserName);
@@ -76,7 +76,7 @@ namespace Roulette.Repository
             return response;
         }
 
-        public async Task<Response<CreateUserResponseModel>> CreateUser(CreateUserRequestModel input, CancellationToken cancellationToken)
+        public async Task<Response<CreateUserResponseModel>> CreateUserAsync(CreateUserRequestModel input, CancellationToken cancellationToken)
         {
             var response = new Response<CreateUserResponseModel>();
             var hashedPassword = Crypto.HashPassword(input.Password);
@@ -106,7 +106,7 @@ namespace Roulette.Repository
             return response;
         }
 
-        public async Task<Response<UserResponseModel>> GetUserByName(string userName, CancellationToken cancellationToken)
+        public async Task<Response<UserResponseModel>> GetUserByNameAsync(string userName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 

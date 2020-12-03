@@ -39,7 +39,6 @@ namespace Roulette.Api.Controllers.v1
             var token = await HttpContext.GetTokenAsync(Const.access_token);
 
             var response = await _unitOfWork.RouletteRepository.BetIsValidHandlerAsync(request, GetUserIdFromTokenAsync(token), cancellationToken);
-
             await _unitOfWork.Commit();
 
             return StatusCode(response.StatusCode, response);
@@ -52,7 +51,7 @@ namespace Roulette.Api.Controllers.v1
         public async Task<IActionResult> GameHistory(CancellationToken cancellationToken)
         {
             var token = await HttpContext.GetTokenAsync(Const.access_token);
-            var response = await _rouletteRepository.GetGameHistoryByUser(GetUserIdFromTokenAsync(token), cancellationToken);
+            var response = await _rouletteRepository.GetGameHistoryByUserAsync(GetUserIdFromTokenAsync(token), cancellationToken);
 
             return StatusCode(response.StatusCode, response);
         }
@@ -63,7 +62,7 @@ namespace Roulette.Api.Controllers.v1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> JackPot(CancellationToken cancellationToken)
         {
-            var response = await _rouletteRepository.GetJackpotSum(cancellationToken);
+            var response = await _rouletteRepository.GetJackpotSumAsync(cancellationToken);
 
             return StatusCode(response.StatusCode, response.Data);
         }
@@ -74,7 +73,7 @@ namespace Roulette.Api.Controllers.v1
         public async Task<IActionResult> UserBalance(CancellationToken cancellationToken)
         {
             var token = await HttpContext.GetTokenAsync(Const.access_token);
-            var response = await _rouletteRepository.GetUserBalance(GetUserIdFromTokenAsync(token), cancellationToken);
+            var response = await _rouletteRepository.GetUserBalanceAsync(GetUserIdFromTokenAsync(token), cancellationToken);
 
             return StatusCode(response.StatusCode, response);
         }

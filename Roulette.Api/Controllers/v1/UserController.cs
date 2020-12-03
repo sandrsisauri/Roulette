@@ -43,7 +43,7 @@ namespace Roulette.Api.Controllers.v1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Register([FromBody] CreateUserRequestModel input, CancellationToken cancellationToken)
         {
-           var response = await _userRepository.CreateUser(input, cancellationToken);
+           var response = await _userRepository.CreateUserAsync(input, cancellationToken);
 
             return StatusCode(response.StatusCode, response);
         }
@@ -55,7 +55,7 @@ namespace Roulette.Api.Controllers.v1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> RequestToken([FromBody] LoginUserRequestModel input, CancellationToken cancellationToken)
         {
-            var response = await _userRepository.GetToken(input, cancellationToken);
+            var response = await _userRepository.GetTokenAsync(input, cancellationToken);
             return StatusCode(response.StatusCode, response);
         }
 
@@ -65,7 +65,7 @@ namespace Roulette.Api.Controllers.v1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetUser([FromRoute]string username, CancellationToken cancellationToken)
         {
-            var response = await _userRepository.GetUserByName(username, cancellationToken);
+            var response = await _userRepository.GetUserByNameAsync(username, cancellationToken);
             return StatusCode(response.StatusCode, response);
         }
     }
