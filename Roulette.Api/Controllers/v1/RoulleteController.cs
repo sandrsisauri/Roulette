@@ -80,7 +80,7 @@ namespace Roulette.Api.Controllers.v1
             return StatusCode(response.StatusCode, response.Data);
         }
 
-        [HttpGet("User/UserBalance")]
+        [HttpGet("User/Balance")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> UserBalance(CancellationToken cancellationToken)

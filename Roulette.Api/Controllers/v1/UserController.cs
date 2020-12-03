@@ -36,11 +36,11 @@ namespace Roulette.Api.Controllers.v1
             _roleManager = roleManager;
         }
 
-        [HttpPost()]
+        [HttpPost]
         [Authorize(Roles = Const.Admin)]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Register([FromBody] CreateUserRequestModel input, CancellationToken cancellationToken)
         {
            var response = await _userRepository.CreateUser(input, cancellationToken);
@@ -51,21 +51,21 @@ namespace Roulette.Api.Controllers.v1
         [AllowAnonymous]
         [HttpPost(nameof(RequestToken))]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> RequestToken([FromBody] LoginUserRequestModel input, CancellationToken cancellationToken)
         {
             var response = await _userRepository.GetToken(input, cancellationToken);
             return StatusCode(response.StatusCode, response);
         }
 
-        [HttpGet()]
+        [HttpGet("{username}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetUser(string userName, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetUser([FromRoute]string username, CancellationToken cancellationToken)
         {
-            var response = await _userRepository.GetUserByName(userName, cancellationToken);
+            var response = await _userRepository.GetUserByName(username, cancellationToken);
             return StatusCode(response.StatusCode, response);
         }
     }

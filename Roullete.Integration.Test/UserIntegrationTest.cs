@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using Roulette.Integration.Test.LocalHelper;
+using Roullete.Integration.Test.LocalHelper;
 
 namespace Roulette.Integration.Test
 {
@@ -18,7 +19,7 @@ namespace Roulette.Integration.Test
         [Fact]
         public async Task Get_User_Unauthorized_Should_Return401()
         {
-            var response = await Client.GetAsync("api/v1/user");
+            var response = await Client.GetAsync($"api/v1/user/{Const.DefaultUser}");
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
@@ -36,19 +37,9 @@ namespace Roulette.Integration.Test
         {
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", (await GetToken()).Data.Token);
 
-            var user = await Client.GetAsync($"api/v1/user?username=Admin");
+            var user = await Client.GetAsync($"api/v1/user/{Const.DefaultUser}");
 
             Assert.Equal(HttpStatusCode.OK, user.StatusCode);
-        }
-
-        [Fact]
-        public async Task Get_User_ByName_WithoutName_Should_Return201()
-        {
-            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", (await GetToken()).Data.Token);
-
-            var user = await Client.GetAsync($"api/v1/user");
-
-            Assert.Equal(HttpStatusCode.BadRequest, user.StatusCode);
         }
 
         [Fact]

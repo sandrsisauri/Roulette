@@ -102,6 +102,8 @@ namespace Roulette.Api
                 endpoints.MapControllers();
             });
         }
+
+        #region Private Methods
         private void AddDependencies(IServiceCollection services)
         {
             services.AddTransient(implementationFactory: sp => new DataContext(Configuration.GetConnectionString(Const.RouletteConnectionString)));
@@ -207,5 +209,6 @@ namespace Roulette.Api
                     new SqlConfiguration(new System.Data.SqlClient.SqlConnectionStringBuilder(Configuration.GetConnectionString(Const.RouletteConnectionString)).InitialCatalog, "RouletteUsers", "RouletteRoles", "RouletteUserClaims", "RouletteUserRoles", "RouletteUserLogins", "RouletteRoleClaims", "RouletteUserTokens")))
                 .AddDefaultTokenProviders();
         }
+        #endregion
     }
 }

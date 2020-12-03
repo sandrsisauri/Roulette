@@ -45,7 +45,7 @@ namespace Roulette.Api.Exstensions
             //logger
             if (code == HttpStatusCode.InternalServerError)
             {
-                ex.Data.Add(nameof(User), !string.IsNullOrEmpty(httpContext.Request.Query[nameof(Roulette.Entity.User.UserName)].ToString()) ? httpContext.Request.Query[nameof(Roulette.Entity.User.UserName)].ToString() : "Unknown");
+                ex.Data.Add(nameof(User), !string.IsNullOrEmpty(httpContext.Request.Query[nameof(User.UserName)].ToString()) ? httpContext.Request.Query[nameof(User.UserName)].ToString() : "Unknown");
                 using (SentrySdk.Init(configuration["Sentry:Dsn"]))
                     SentrySdk.CaptureException(ex);
             }
