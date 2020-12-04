@@ -1,18 +1,9 @@
-﻿using AutoMapper;
-using ge.singular.roulette;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Roulette.Data.Models.Request;
-using Roulette.Data.Models.Response;
 using Roulette.Repository.Contract;
-using Roulette.Entity;
 using Roulette.Helper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 

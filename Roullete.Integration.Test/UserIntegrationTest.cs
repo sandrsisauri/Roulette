@@ -6,7 +6,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using Roulette.Integration.Test.LocalHelper;
-using Roullete.Integration.Test.LocalHelper;
 
 namespace Roulette.Integration.Test
 {

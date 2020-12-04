@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Roullete.Integration.Test.LocalHelper
+namespace Roulette.Integration.Test.LocalHelper
 {
     internal class Const
     {

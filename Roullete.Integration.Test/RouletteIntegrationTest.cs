@@ -1,18 +1,13 @@
 ﻿using Newtonsoft.Json;
 using Roulette.Data.Models.Response;
-using Roulette.Integration.Test;
 using Roulette.Integration.Test.LocalHelper;
-using Roullete.Integration.Test.LocalHelper;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Roullete.Integration.Test
+namespace Roulette.Integration.Test
 {
     public class RouletteIntegrationTest : IntegrationTestFixture
     {
@@ -29,12 +24,10 @@ namespace Roullete.Integration.Test
 
             var obj = JsonConvert.DeserializeObject<Response<IEnumerable<GameHistoryResponseModel>>>(await response.Content.ReadAsStringAsync());
 
-            Assert.Null(obj.Message);
-            Assert.NotNull(obj);
             Assert.Equal((int)HttpStatusCode.OK, obj.StatusCode);
         }
         [Fact]
-        public async Task Get_Jackpot_Response_Null_Check()
+        public async Task Get_Jackpot_Response_Null_Checks()
         {
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", (await GetToken()).Data.Token);
 

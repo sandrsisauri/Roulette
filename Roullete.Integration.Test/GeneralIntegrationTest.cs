@@ -1,16 +1,11 @@
-﻿using Roulette.Integration.Test;
-using Roulette.Integration.Test.LocalHelper;
-using Roullete.Integration.Test.LocalHelper;
-using System;
-using System.Collections.Generic;
+﻿using Roulette.Integration.Test.LocalHelper;
 using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Roullete.Integration.Test
+namespace Roulette.Integration.Test
 {
     public class GeneralIntegrationTest : IntegrationTestFixture
     {

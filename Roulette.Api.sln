@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker-files", "docker-file
 		docker-compose.production.yml = docker-compose.production.yml
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roullete.Integration.Test", "Roullete.Integration.Test\Roullete.Integration.Test.csproj", "{68017FAB-D4F5-4BFA-A367-F012B44ED2DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roulette.Integration.Test", "Roullete.Integration.Test\Roulette.Integration.Test.csproj", "{68017FAB-D4F5-4BFA-A367-F012B44ED2DF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roulette.Entity", "Roulette.Entity\Roulette.Entity.csproj", "{93749E9D-8AE8-468A-8944-D0DD972D51E1}"
 EndProject
