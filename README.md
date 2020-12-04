@@ -40,7 +40,7 @@ $ clone https://github.com/sandr01/Roulette.Api.git
 ```
 - Find <B>docker-compose.production.yml </B> file is solution folder and run in cmd for production purposes (command below)
 ```shell
-$ run docker-compose -f docker-compose.production.yml up
+$ docker-compose -f docker-compose.production.yml up
 ```
 > Navigate :
  http://localhost:8000/api
@@ -51,7 +51,7 @@ $ run docker-compose -f docker-compose.production.yml up
 
 - Find <B>docker-compose.development.yml </B> file is solution folder and run in cmd for development purposes (command below)
 ```shell
-$ run docker-compose -f docker-compose.development.yml up
+$ docker-compose -f docker-compose.development.yml up
 ```
 ---
 ## Notes
