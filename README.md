@@ -3,7 +3,7 @@
   <a href="#">
     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcS49HPDAbme5yIhOyFf-rOKCAzmXPCOdQyqMsbdE0tP61uE8ccP&usqp=CAU" alt="Logo" width="110" height="110">
   </a>
-  <h1 align="center">Singular Roulette</h1>
+  <h1 align="center">Roulette Api</h1>
   <p align="center">
     Application for a virtual roulette game
     <br />
